@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Set working directory
-WORKDIR /public/index.php
+WORKDIR /var/www/html
 
 # Copy existing application directory
 COPY . .
@@ -35,6 +35,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Ensure storage and cache folders exist and set permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Change Apache DocumentRoot to Laravel's /public directory
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf
 
 # Expose Render's port
 EXPOSE 8080
