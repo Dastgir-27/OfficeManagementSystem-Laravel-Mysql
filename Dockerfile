@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /public/index.php
 
 # Copy existing application directory
 COPY . .
