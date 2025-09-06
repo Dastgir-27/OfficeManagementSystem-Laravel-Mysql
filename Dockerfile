@@ -42,9 +42,15 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 # Expose Render's port
 EXPOSE 8080
 
-# Configure Apache to use Render's dynamic PORT
-RUN echo "Listen ${PORT}" >> /etc/apache2/ports.conf
+
+# Set Apache environment vars
+ENV APACHE_RUN_USER=www-data
+ENV APACHE_RUN_GROUP=www-data
+ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
+ENV APACHE_RUN_DIR=/var/run/apache2
+ENV APACHE_LOCK_DIR=/var/lock/apache2
+ENV APACHE_LOG_DIR=/var/log/apache2
 ENV APACHE_RUN_PORT=${PORT}
 
-# Start Apache in the foreground
-CMD ["apache2-foreground"]
+# Start Apache on Render's assigned $PORT
+CMD ["sh", "-c", "sed -i 's/80/${PORT}/' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && apache2-foreground"]
